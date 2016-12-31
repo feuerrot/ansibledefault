@@ -1,0 +1,19 @@
+- name: Install ferm
+  apt:
+    name: mosh
+    state: present
+    update_cache: yes
+
+- name: Create directory for includes
+  file:
+    path: /etc/ferm/ferm.d
+    owner: root
+    group: root
+    state: directory
+
+- name: Install config for ferm
+  copy:
+    src: 'roles/mosh/files/mosh_ferm'
+    dest: '/etc/ferm/ferm.d/mosh.conf'
+    owner: root
+    group: root

@@ -1,0 +1,7 @@
+- name: Install defaultfoo
+  become: yes
+  hosts: default
+  roles:
+    - common
+    - ferm
+    - mosh

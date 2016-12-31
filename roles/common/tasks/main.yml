@@ -1,0 +1,37 @@
+- name: Install packages
+  package: name={{ item }} state=present
+  with_items:
+    - zsh
+    - htop
+    - vim
+    - git
+    - wget
+    - screen
+
+- name: Install config for zsh, vim, screen
+  copy:
+    src: 'roles/common/files/{{ item.src }}'
+    dest: '/root/{{ item.dest }}'
+    owner: root
+    group: root
+  with_items:
+    - { src: 'screenrc', dest: '.screenrc' }
+    - { src: 'vimrc', dest: '.vimrc' }
+    - { src: 'zshrc', dest: '.zshrc' }
+
+- name: Create directory for htop config
+  file:
+    path: /root/.config/htop/
+    owner: root
+    group: root
+    state: directory
+
+- name: Install config for htop
+  copy:
+    src: roles/common/files/htoprc
+    dest: /root/.config/htop/
+
+- name: Set zsh as default shell
+  user:
+    name: root
+    shell: /bin/zsh

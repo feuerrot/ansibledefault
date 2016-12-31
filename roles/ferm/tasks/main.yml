@@ -1,0 +1,19 @@
+- name: Install ferm
+  apt:
+    name: ferm
+    state: present
+    update_cache: yes
+
+- name: Create directory for includes
+  file:
+    path: /etc/ferm/ferm.d
+    owner: root
+    group: root
+    state: directory
+
+- name: Install config for ferm
+  copy:
+    src: 'roles/ferm/files/ferm.conf'
+    dest: '/etc/ferm/ferm.conf'
+    owner: root
+    group: root
