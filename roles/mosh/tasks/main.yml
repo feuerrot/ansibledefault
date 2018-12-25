@@ -17,3 +17,5 @@
     dest: '/etc/ferm/ferm.d/mosh.conf'
     owner: root
     group: root
+  notify:
+    - reload ferm
