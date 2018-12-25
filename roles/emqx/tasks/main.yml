@@ -1,0 +1,11 @@
+- name: Install emqx
+  apt:
+    deb: https://github.com/emqx/emqx/releases/download/v3.0.0/emqx-debian9-v3.0.0_amd64.deb
+    state: present
+
+- name: Install config for ferm
+  copy:
+    src: 'roles/emqx/files/emqx.conf'
+    dest: '/etc/ferm/ferm.d/emqx.conf'
+    owner: root
+    group: root
