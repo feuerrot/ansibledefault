@@ -1,4 +1,4 @@
-- name: restart ferm
+- name: restart emqx
   service:
-    name: ferm
+    name: emqx
     state: restarted

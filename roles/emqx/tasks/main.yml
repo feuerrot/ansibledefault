@@ -12,12 +12,15 @@
   notify:
     - reload ferm
 
-- name: Copy config files for emqx
+- name: Copy emqx config
   copy:
     src: 'roles/emqx/files/emqx/emqx.conf'
     dest: '/etc/emqx/emqx.conf'
     owner: root
     group: root
+  notify:
+    - restart emqx
+- name: Copy emqx acl
   copy:
     src: 'roles/emqx/files/emqx/acl.conf'
     dest: '/etc/emqx/acl.conf'
