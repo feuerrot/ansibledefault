@@ -40,9 +40,3 @@
   user:
     name: root
     shell: /bin/zsh
-
-- name: Set net.ipv6.bindv6only=0
-  sysctl:
-    name: net.ipv6.bindv6only
-    value: 0
-    state: present
