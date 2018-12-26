@@ -5,5 +5,5 @@ cert_domain_full:
   - "{{ inventory_hostname }}"
 vhost_hostname: "{{ inventory_hostname }}"
 vhost_docroot: "/var/www/{{ inventory_hostname }}/public_html"
-vhost_pemfile: "/etc/ssl/{{ inventory_hostname }}"
+vhost_pemfile: "/etc/ssl/{{ inventory_hostname }}.pem"
 vhost_dhfile: "/etc/lighttpd/dhparams.pem"
