@@ -1,0 +1,9 @@
+lighty_wellknown: /var/www/html/.well-known/
+lighty_includedir: /etc/lighttpd/lighttpd.d
+cert_domain: "{{ inventory_hostname }}"
+cert_domain_full:
+  - "{{ inventory_hostname }}"
+vhost_hostname: "{{ inventory_hostname }}"
+vhost_docroot: "/var/www/{{ inventory_hostname }}/public_html"
+vhost_pemfile: "/etc/ssl/{{ inventory_hostname }}"
+vhost_dhfile: "/etc/lighttpd/dhparams.pem"

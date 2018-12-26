@@ -1,0 +1,13 @@
+- name: mkdir
+  file:
+    path: "/var/www/{{ inventory_hostname }}/public_html"
+    owner: root
+    group: root
+    state: directory
+
+- name: Install vhost config for lighttpd
+  template:
+    src: 'roles/lighttpd/templates/vhost.conf.j2'
+    dest: '/etc/lighttpd/lighttpd.d/{{ vhost_hostname }}.conf'
+    owner: root
+    group: root

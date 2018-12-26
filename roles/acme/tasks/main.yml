@@ -1,0 +1,54 @@
+- name: Install acme-tiny
+  get_url:
+    url: https://github.com/diafygi/acme-tiny/archive/4.0.4.tar.gz
+    dest: /tmp/acme.tar.gz
+    checksum: sha256:ba535d556ab01b91751370270fe6f1e1cbf960a4c8a0ac6b72e2e43008dd5786
+
+- unarchive:
+    remote_src: yes
+    src: /tmp/acme.tar.gz
+    dest: /tmp
+
+- copy:
+    remote_src: yes
+    src: /tmp/acme-tiny-4.0.4/acme_tiny.py
+    dest: /usr/bin/acme-tiny
+    mode: 0555
+
+- name: Ensure the existence of a private key
+  openssl_privatekey:
+    path: /etc/ssl/{{ cert_domain }}.key
+
+- name: Ensure the existence of a CSR
+  openssl_csr:
+    path: /etc/ssl/{{ cert_domain }}.csr
+    privatekey_path: /etc/ssl/{{ cert_domain }}.key
+    subject_alt_name: "{{ cert_domain_full | map('regex_replace', '^', 'DNS:') | list }}"
+
+- openssl_privatekey:
+    path: /etc/ssl/acme.key
+
+- name: Ensure acme challenge dir exists
+  file:
+    path: "{{ lighty_wellknown }}/acme-challenge"
+    owner: root
+    group: root
+    state: directory
+
+- name: Check if certs exists and is valid
+  openssl_certificate:
+    path: "/etc/ssl/{{ cert_domain }}.crt"
+    csr_path: "/etc/ssl/{{ cert_domain }}.csr"
+    privatekey_path: "/etc/ssl/{{ cert_domain }}.key"
+    provider: acme
+    acme_accountkey_path: /etc/ssl/acme.key
+    acme_challenge_path: "{{ lighty_wellknown }}/acme-challenge"
+    acme_chain: no
+    valid_in: 604800
+    issuer:
+      O: Let's Encrypt
+  register: cert
+
+- name: Merge TLS keyfile
+  shell: cat '/etc/ssl/{{ cert_domain }}.crt' '/etc/ssl/{{ cert_domain }}.key' > '/etc/ssl/{{ cert_domain }}.pem'
+  when: cert is succeeded

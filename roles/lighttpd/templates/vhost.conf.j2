@@ -1,0 +1,29 @@
+$HTTP["host"] == "{{ vhost_hostname }}" {
+	server.document-root = "{{ vhost_docroot }}"
+	{% if vhost_pemfile %}
+    $SERVER["socket"] == "0.0.0.0:443" {
+            ssl.engine = "enable"
+            ssl.cipher-list = "EECDH+AESGCM:EDH+AESGCM:AES128+EECDH:AES128+EDH"
+            ssl.ec-curve = "secp384r1"
+			{% if vhost_cafile is defined %}
+            ssl.ca-file = "{{ vhost_cafile }}"
+			{% endif %}
+			{% if vhost_dhfile is defined %}
+            ssl.dh-file = "{{ vhost_dhfile }}" 
+			{% endif %}
+            ssl.pemfile = "{{ vhost_pemfile }}"
+    }
+    $SERVER["socket"] == "[::]:443" {
+            ssl.engine = "enable"
+            ssl.cipher-list = "EECDH+AESGCM:EDH+AESGCM:AES128+EECDH:AES128+EDH"
+            ssl.ec-curve = "secp384r1"
+			{% if vhost_cafile is defined %}
+            ssl.ca-file = "{{ vhost_cafile }}"
+			{% endif %}
+			{% if vhost_dhfile is defined %}
+            ssl.dh-file = "{{ vhost_dhfile }}" 
+			{% endif %}
+            ssl.pemfile = "{{ vhost_pemfile }}"
+    }
+	{% endif %}
+}

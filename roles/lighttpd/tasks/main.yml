@@ -1,0 +1,5 @@
+- name: Install lighttpd
+  import_tasks: install.yml
+
+- name: Configure vhosts
+  import_tasks: vhosts.yml

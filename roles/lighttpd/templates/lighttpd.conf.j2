@@ -1,0 +1,58 @@
+server.modules = (
+        "mod_access",
+        "mod_alias",
+        "mod_compress",
+        "mod_auth",
+        "mod_accesslog",
+        "mod_extforward",
+        "mod_setenv",
+        "mod_redirect",
+        "mod_proxy",
+        "mod_fastcgi"
+)
+
+server.document-root        = "/var/www/public_html"
+server.upload-dirs          = ( "/var/cache/lighttpd/uploads" )
+accesslog.filename          = "/var/log/lighttpd/access.log"
+server.errorlog             = "/var/log/lighttpd/error.log"
+server.pid-file             = "/var/run/lighttpd.pid"
+server.username             = "www-data"
+server.groupname            = "www-data"
+server.port                 = 80
+
+index-file.names            = ( "index.php", "index.html", "index.lighttpd.html" )
+url.access-deny             = ( "~", ".inc", ".htaccess" )
+static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
+
+compress.cache-dir          = "/var/cache/lighttpd/compress/"
+compress.filetype           = ( "application/javascript", "text/css", "text/html", "text/plain" )
+
+# default listening port for IPv6 falls back to the IPv4 port
+include_shell "/usr/share/lighttpd/use-ipv6.pl " + server.port
+include_shell "/usr/share/lighttpd/create-mime.conf.pl"
+include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
+
+include "{{ lighty_includedir }}/*.conf"
+
+setenv.add-response-header = (
+        "X-Frame-Options" => "DENY",
+        "Content-Security-Policy" => "default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'",
+        "Feature-Policy" => "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'none'; sync-xhr 'none'; usb 'none'; vr 'none'",
+        "X-Xss-Protection" => "1; mode=block",
+        "X-Content-Type-Options" => "nosniff",
+        "Referrer-Policy" => "strict-origin-when-cross-origin"
+)
+
+$HTTP["url"] =~ "^/.well-known/" {
+        server.document-root = "{{ lighty_wellknown }}/acme-challenge/"
+        alias.url = ( "/.well-known/" => "{{ lighty_wellknown }}" )
+        dir-listing.activate = "disable"
+}
+
+#$HTTP["scheme"] == "http" {                
+#        $HTTP["url"] !~ "^(/.well-known/.*)$" {
+#                $HTTP["host"] =~ ".*" {
+#                        url.redirect = (".*" => "https://%0$0")
+#                }
+#        }
+#}

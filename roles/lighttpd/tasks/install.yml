@@ -1,0 +1,40 @@
+- name: Install lighttpd
+  apt:
+    name: lighttpd
+    state: present
+    update_cache: yes
+
+- name: Create .well-known
+  file:
+    path: "{{ lighty_wellknown }}"
+    owner: www-data
+    group: www-data
+    state: directory
+
+- name: Create config include dir
+  file:
+    path: "{{ lighty_includedir }}"
+    owner: root
+    group: root
+    state: directory
+
+- openssl_dhparam:
+    path: /etc/lighttpd/dhparams.pem
+
+- name: Install config for lighttpd
+  template:
+    src: 'roles/lighttpd/templates/lighttpd.conf.j2'
+    dest: '/etc/lighttpd/lighttpd.conf'
+    owner: root
+    group: root
+  notify:
+    - reload lighttpd
+
+- name: Install config for ferm
+  copy:
+    src: 'roles/lighttpd/files/ferm/lighttpd.conf'
+    dest: '/etc/ferm/ferm.d/lighttpd.conf'
+    owner: root
+    group: root
+  notify:
+    - reload ferm

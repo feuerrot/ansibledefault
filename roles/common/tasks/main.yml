@@ -7,6 +7,11 @@
     - git
     - wget
     - screen
+    - python-openssl
+    - ntpdate
+
+- name: ensure current time
+  command: ntpdate ntp1.ptb.de
 
 - name: Install config for zsh, vim, screen
   copy:
@@ -35,3 +40,9 @@
   user:
     name: root
     shell: /bin/zsh
+
+- name: Set net.ipv6.bindv6only=0
+  sysctl:
+    name: net.ipv6.bindv6only
+    value: 0
+    state: present

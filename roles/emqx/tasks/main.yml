@@ -5,25 +5,26 @@
 
 - name: Install config for ferm
   copy:
-    src: 'roles/emqx/files/ferm/emqx.conf'
-    dest: '/etc/ferm/ferm.d/emqx.conf'
+    src: "roles/emqx/files/ferm/emqx.conf"
+    dest: "/etc/ferm/ferm.d/emqx.conf"
     owner: root
     group: root
   notify:
     - reload ferm
 
 - name: Copy emqx config
-  copy:
-    src: 'roles/emqx/files/emqx/emqx.conf'
-    dest: '/etc/emqx/emqx.conf'
+  template:
+    src: "roles/emqx/templates/emqx.conf.j2"
+    dest: "/etc/emqx/emqx.conf"
     owner: root
     group: root
   notify:
     - restart emqx
+
 - name: Copy emqx acl
   copy:
-    src: 'roles/emqx/files/emqx/acl.conf'
-    dest: '/etc/emqx/acl.conf'
+    src: "roles/emqx/files/emqx/acl.conf"
+    dest: "/etc/emqx/acl.conf"
     owner: root
     group: root
   notify:
